@@ -7,6 +7,10 @@ const int pinoBuzzer = 3;
 const int pinoBotao  = 6;
 bool movimento = false;
 
+
+
+
+ 
 float referenciaX = 0.0;
 float referenciaY = 0.0;
 
