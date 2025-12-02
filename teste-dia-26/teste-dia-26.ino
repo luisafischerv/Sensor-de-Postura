@@ -100,5 +100,5 @@ void loop() {
   Serial.print(" | Tempo fora: ");
   Serial.println((millis() - instanteParado) / 1000);
 
-  delay(1);
+  delay(50);
 }
