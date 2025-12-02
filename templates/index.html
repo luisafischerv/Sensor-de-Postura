@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Posturatto</title>
+</head>
+<body>
+    <h1>Dados recebidos do Arduino:</h1>
+
+    <pre id="saida" style="font-size:18px; background:#eee; padding:10px; width:600px; height:300px; overflow:auto;"></pre>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("arduino_data", (data) => {
+            const saida = document.getElementById("saida");
+            saida.textContent += data.texto + "\n"; 
+            saida.scrollTop = saida.scrollHeight;
+        });
+    </script>
+</body>
+</html>
