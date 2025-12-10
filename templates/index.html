@@ -1,23 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Posturatto</title>
+  <meta charset="UTF-8">
+  <title>Posturatto | Monitor de Postura</title>
+
+  <!-- Fonte bonita -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #cbd5f5;
+      margin-bottom: 25px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .status span {
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .terminal {
+      background: #0f172a;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 15px;
+      height: 300px;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button {
+      background: #6366f1;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #4f46e5;
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 15px;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Dados recebidos do Arduino:</h1>
 
-    <pre id="saida" style="font-size:18px; background:#eee; padding:10px; width:600px; height:300px; overflow:auto;"></pre>
+  <div class="container">
+    <h1>📡 Posturatto</h1>
+    <p class="subtitle">Monitoramento de postura em tempo real</p>
 
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    <script>
-        const socket = io();
+    <div class="status">
+      <span id="led"></span>
+      <p id="status-text">Desconectado</p>
+    </div>
 
-        socket.on("arduino_data", (data) => {
-            const saida = document.getElementById("saida");
-            saida.textContent += data.texto + "\n"; 
-            saida.scrollTop = saida.scrollHeight;
-        });
-    </script>
+    <div id="saida" class="terminal"></div>
+
+    <div class="controls">
+      <button onclick="limpar()">Limpar Dados</button>
+    </div>
+
+    <footer>
+      Sensor de Postura • CESAR School
+    </footer>
+  </div>
+
+  <!-- Socket.IO -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+  <!-- JavaScript -->
+  <script>
+    const socket = io();
+
+    const saida = document.getElementById("saida");
+    const statusText = document.getElementById("status-text");
+    const led = document.getElementById("led");
+
+    socket.on("connect", () => {
+      statusText.innerText = "Conectado";
+      led.style.background = "lime";
+    });
+
+    socket.on("disconnect", () => {
+      statusText.innerText = "Desconectado";
+      led.style.background = "red";
+    });
+
+    socket.on("arduino_data", (data) => {
+      const hora = new Date().toLocaleTimeString();
+      saida.textContent += `[${hora}] ${data.texto}\n`;
+      saida.scrollTop = saida.scrollHeight;
+    });
+
+    function limpar() {
+      saida.textContent = "";
+    }
+  </script>
+
 </body>
 </html>
